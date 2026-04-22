@@ -14,8 +14,9 @@ function LogoModule.run(config)
   if text == "" then text = "Unknown" end
 
   local color = config.color or "blue"
-  -- Default to embedded font data, allow override via config.font
-  local font_source = config.font or font_data
+  
+  -- Use embedded font data by default, allow override if font path is provided
+  local font_source = config.font and config.font or font_data
 
   local success, lines = pcall(logo_gen.generate, text, font_source)
 
