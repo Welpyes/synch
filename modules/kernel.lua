@@ -1,10 +1,10 @@
 local KernelModule = {}
-local kernel_util = require("utils.get-kernel")
+local sys_info = require("utils.get-sysinfo")
 local colorizer = require("utils.colorizer")
 
 function KernelModule.run(config)
   config = config or {}
-  local info = kernel_util.get_info()
+  local info = sys_info.get_info()
 
   local icon = config.icon or ""
   local key = config.key or "Kernel"
@@ -14,7 +14,8 @@ function KernelModule.run(config)
   local key_color = config["key-color"] or "white"
   local format_color = config["format-color"] or "light blue"
 
-  local value = format:gsub("{name}", info.name):gsub("{version}", info.version)
+  -- Map new sysinfo keys to legacy template keys
+  local value = format:gsub("{name}", info.kernel):gsub("{version}", info["kernel-version"])
 
   local output = string.format("%s %s     %s", 
     colorizer.colorize(icon, icon_color),

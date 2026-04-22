@@ -6,7 +6,7 @@ modules = [
 
 [logo]
 color = "blue"
-text = "Android"
+format = "{distro}"
 
 [kernel]
 key = "Kernel"
