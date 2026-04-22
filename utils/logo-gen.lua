@@ -1,7 +1,4 @@
-local text = arg[1]
-if not text or text == "" then os.exit(1) end
-
-local FONT_FILE = "smslant.flf"
+local LogoGen = {}
 
 local SM_SMUSH = 128
 local SM_KERN  = 64
@@ -10,7 +7,7 @@ local SM_KERN  = 64
 local function parse_header(raw)
   local sig, hardblank, height, baseline, maxlen, old_layout, comment_lines =
     raw:match("^(flf2a)(.)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)")
-return {
+  return {
     sig           = sig,
     hardblank     = hardblank,
     height        = tonumber(height),
@@ -35,7 +32,7 @@ local function parse_char(file, height)
   return lines
 end
 
-local function load_font(path)
+function LogoGen.load_font(path)
   local file = io.open(path, "r")
   if not file then error("Could not open " .. path) end
 
@@ -171,7 +168,7 @@ local function apply_smush(outputLines, charLines, height, smushAmount, hardblan
   return result
 end
 
-local function render(text, chars, height, hardblank, smushMode)
+function LogoGen.render(text, chars, height, hardblank, smushMode)
   local outputLines = {}
   for i = 1, height do outputLines[i] = "" end
 
@@ -190,7 +187,7 @@ local function render(text, chars, height, hardblank, smushMode)
   return outputLines
 end
 
-local function trim_trailing_blank_rows(outputLines, height, hardblank)
+function LogoGen.trim_trailing_blank_rows(outputLines, height, hardblank)
   local escapedHardblank = hardblank:gsub("[%%.%+%-%*%?%^%$%(%)%[]", "%%%1")
   local lastRow = height
   for row = height, 1, -1 do
@@ -203,12 +200,17 @@ local function trim_trailing_blank_rows(outputLines, height, hardblank)
   return lastRow, escapedHardblank
 end
 
--- Main
-local header, chars = load_font(FONT_FILE)
-local smushMode = resolve_smush_mode(header.old_layout)
-local outputLines = render(text, chars, header.height, header.hardblank, smushMode)
+function LogoGen.generate(text, font_file)
+  local header, chars = LogoGen.load_font(font_file)
+  local smushMode = resolve_smush_mode(header.old_layout)
+  local outputLines = LogoGen.render(text, chars, header.height, header.hardblank, smushMode)
 
-local lastRow, escapedHardblank = trim_trailing_blank_rows(outputLines, header.height, header.hardblank)
-for row = 1, lastRow do
-  print((outputLines[row]:gsub(escapedHardblank, " ")))
+  local lastRow, escapedHardblank = LogoGen.trim_trailing_blank_rows(outputLines, header.height, header.hardblank)
+  local result = {}
+  for row = 1, lastRow do
+    table.insert(result, (outputLines[row]:gsub(escapedHardblank, " ")))
+  end
+  return result
 end
+
+return LogoGen
