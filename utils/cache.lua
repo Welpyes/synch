@@ -1,6 +1,7 @@
 local Cache = {}
 
 local cache_path = os.getenv("HOME") .. "/.cache/synch-cache.json"
+local loaded_data = nil
 
 local function read_file(path)
   local file = io.open(path, "r")
@@ -19,13 +20,10 @@ local function write_file(path, content)
   file:close()
 end
 
--- Simple JSON parser for the specific structure requested
 local function parse_json(content)
   if not content then return nil end
   local data = {}
-  -- Handle nested structure "cache": { "section": { "key": "value" } }
   local current_section = nil
-  
   for line in content:gmatch("[^\r\n]+") do
     local section = line:match('^%s*"([^"]+)":%s*{%s*$')
     if section then
@@ -45,7 +43,6 @@ end
 
 local function serialize_json(data)
   local lines = { '{', '  "cache": {' }
-  
   local sections = {}
   for section_name, section_data in pairs(data) do
     local s_lines = { string.format('    "%s": {', section_name) }
@@ -57,28 +54,25 @@ local function serialize_json(data)
     table.insert(s_lines, '    }')
     table.insert(sections, table.concat(s_lines, "\n"))
   end
-  
   table.insert(lines, table.concat(sections, ",\n"))
   table.insert(lines, '  }')
   table.insert(lines, '}')
-  
   return table.concat(lines, "\n")
 end
 
 function Cache.get(section)
-  local content = read_file(cache_path)
-  local data = parse_json(content)
-  if data and data[section] then
-    return data[section]
+  if not loaded_data then
+    loaded_data = parse_json(read_file(cache_path)) or {}
   end
-  return nil
+  return loaded_data[section]
 end
 
 function Cache.set(section, info)
-  local content = read_file(cache_path)
-  local data = parse_json(content) or {}
-  data[section] = info
-  write_file(cache_path, serialize_json(data))
+  if not loaded_data then
+    loaded_data = parse_json(read_file(cache_path)) or {}
+  end
+  loaded_data[section] = info
+  write_file(cache_path, serialize_json(loaded_data))
 end
 
 return Cache

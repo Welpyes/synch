@@ -15,6 +15,7 @@ ffi.cdef[[
 ]]
 
 local SysInfo = {}
+local memoized_info = nil
 
 local function get_android_prop(prop_name)
   local value = ffi.new("char[92]")
@@ -27,11 +28,10 @@ local function parse_os_release()
   local info = { name = "Linux", version = "", codename = "" }
   local file = io.open("/etc/os-release", "r")
   if not file then return info end
-  
   for line in file:lines() do
     local k, v = line:match('^([%w_]+)=(.*)$')
     if k then
-      v = v:gsub('^"(.*)"$', '%1') -- strip quotes
+      v = v:gsub('^"(.*)"$', '%1')
       if k == "NAME" then info.name = v
       elseif k == "VERSION_ID" then info.version = v
       elseif k == "VERSION_CODENAME" then info.codename = v
@@ -43,14 +43,14 @@ local function parse_os_release()
 end
 
 function SysInfo.get_info()
+  if memoized_info then return memoized_info end
+
   local cached_info = cache.get("sysinfo")
-  -- If cached_info exists and has 'codename' (new field), return it.
-  -- This forces a refresh if the old cache format (without codename) exists.
   if cached_info and cached_info.distro and cached_info.codename then
-    return cached_info
+    memoized_info = cached_info
+    return memoized_info
   end
 
-  -- Fetch fresh info
   local u = ffi.new("struct utsname[1]")
   ffi.C.uname(u)
   
@@ -68,7 +68,7 @@ function SysInfo.get_info()
     codename = os_info.codename
   end
 
-  local info = {
+  memoized_info = {
     distro = distro,
     version = version,
     codename = codename,
@@ -78,10 +78,8 @@ function SysInfo.get_info()
     hostname = ffi.string(u[0].nodename)
   }
 
-  -- Save to cache
-  cache.set("sysinfo", info)
-  
-  return info
+  cache.set("sysinfo", memoized_info)
+  return memoized_info
 end
 
 return SysInfo

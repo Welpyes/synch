@@ -5,6 +5,7 @@ ffi.cdef[[
 ]]
 
 local BoardUtil = {}
+local memoized_board = nil
 
 local function get_android_prop(prop_name)
   local value = ffi.new("char[92]")
@@ -22,24 +23,26 @@ local function read_file_line(path)
 end
 
 function BoardUtil.get_info()
-  -- Check for Android property function availability
+  if memoized_board then return memoized_board end
+
   local is_android = pcall(function() return ffi.C.__system_property_get end)
   
   if is_android then
     local manufacturer = get_android_prop("ro.product.manufacturer") or "Unknown"
     local model = get_android_prop("ro.product.model") or "Unknown"
-    return {
+    memoized_board = {
       manufacturer = manufacturer,
       model = model
     }
   else
     local manufacturer = read_file_line("/sys/class/dmi/id/board_vendor") or "Unknown"
     local model = read_file_line("/sys/class/dmi/id/board_name") or "Unknown"
-    return {
+    memoized_board = {
       manufacturer = manufacturer,
       model = model
     }
   end
+  return memoized_board
 end
 
 return BoardUtil
