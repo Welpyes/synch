@@ -5,10 +5,11 @@ modules = [
  "user:hostname",
  "os",
  "host",
- "cpu",
- "gpu",
  "kernel",
- "uptime"
+ "uptime",
+ "shell",
+ "cpu",
+ "gpu"
 ]
 
 [logo]
@@ -62,6 +63,14 @@ key-color = "white"
 icon-color = "light yellow"
 format-color = "light yellow"
 format = "{name}"
+
+[shell]
+key = "Shell"
+icon = ""
+key-color = "white"
+icon-color = "light blue"
+format-color = "light blue"
+format = "{name} {version}"
 
 [kernel]
 key = "Kernel"
