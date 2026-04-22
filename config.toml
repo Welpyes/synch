@@ -1,7 +1,8 @@
 [global]
 modules = [
  "logo",
- "kernel"
+ "kernel",
+ "uptime"
 ]
 
 [logo]
@@ -15,3 +16,11 @@ key-color = "white"
 icon-color = "light blue"
 format-color = "light blue"
 format = "{name} {version}"
+
+[uptime]
+key = "Uptime"
+icon = ""
+key-color = "white"
+icon-color = "light yellow"
+format-color = "light yellow"
+format = "{time}"
