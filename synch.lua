@@ -30,12 +30,14 @@ else
 end
 
 if config.global and config.global.modules then
-  for _, module_name in ipairs(config.global.modules) do
+  for _, entry in ipairs(config.global.modules) do
+    local module_name = entry:match("^([^:]+)")
+    
     local success, module = pcall(require, "modules." .. module_name)
     if success then
-      module.run(config[module_name])
+      module.run(config[entry])
     else
-      print("Error loading module: " .. module_name .. " - " .. tostring(module))
+      print("Error loading module: " .. entry .. " - " .. tostring(module))
     end
   end
 end
