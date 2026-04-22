@@ -48,22 +48,26 @@ function SysInfo.get_info()
   local cached_info = cache.get("sysinfo")
   if cached_info and cached_info.distro and cached_info.codename then
     memoized_info = cached_info
+    -- Ensure is_android is correctly set in cached info
+    memoized_info.is_android = (memoized_info.distro == "Android")
     return memoized_info
   end
 
   local u = ffi.new("struct utsname[1]")
   ffi.C.uname(u)
   
-  local distro, version, codename
+  local distro, version, codename, is_android
   local f = io.open("/system/lib64/ld-android.so", "r")
   if f then
     f:close()
     distro = "Android"
+    is_android = true
     version = get_android_prop("ro.com.google.gmsversion") or ""
     codename = get_android_prop("ro.build.version.all_codenames") or ""
   else
     local os_info = parse_os_release()
     distro = os_info.name
+    is_android = false
     version = os_info.version
     codename = os_info.codename
   end
@@ -72,6 +76,7 @@ function SysInfo.get_info()
     distro = distro,
     version = version,
     codename = codename,
+    is_android = is_android,
     kernel = ffi.string(u[0].sysname),
     ["kernel-version"] = ffi.string(u[0].release),
     arch = ffi.string(u[0].machine),

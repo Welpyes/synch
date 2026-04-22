@@ -4,7 +4,8 @@ modules = [
  "user:user",
  "user:hostname",
  "os",
- "board",
+ "host",
+ "cpu",
  "kernel",
  "uptime"
 ]
@@ -37,13 +38,21 @@ icon-color = "light green"
 format-color = "light green"
 format = "{name} {release} {version} {arch}"
 
-[board]
-key = "Board"
+[host]
+key = "Host"
 icon = "󱤓"
 key-color = "white"
 icon-color = "light cyan"
 format-color = "light cyan"
 format = "{manufacturer} {model}"
+
+[cpu]
+key = "Cpu"
+icon = ""
+key-color = "white"
+icon-color = "red"
+format-color = "red"
+format = "{cpu}"
 
 [kernel]
 key = "Kernel"
