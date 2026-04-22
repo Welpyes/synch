@@ -6,6 +6,7 @@ modules = [
  "os",
  "host",
  "cpu",
+ "gpu",
  "kernel",
  "uptime"
 ]
@@ -53,6 +54,14 @@ key-color = "white"
 icon-color = "red"
 format-color = "red"
 format = "{cpu}"
+
+[gpu]
+key = "Gpu"
+icon = "󰢮"
+key-color = "white"
+icon-color = "light yellow"
+format-color = "light yellow"
+format = "{name}"
 
 [kernel]
 key = "Kernel"
