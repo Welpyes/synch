@@ -1,6 +1,7 @@
 [global]
 modules = [
  "logo",
+ "user",
  "os",
  "kernel",
  "uptime"
@@ -9,6 +10,14 @@ modules = [
 [logo]
 color = "blue"
 format = "{distro}"
+
+[user]
+key = "User"
+icon = ""
+key-color = "white"
+icon-color = "light magenta"
+format-color = "light magenta"
+format = "{user}@{host}"
 
 [os]
 key = "OS"
