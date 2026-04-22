@@ -2,6 +2,11 @@ local LogoModule = {}
 local logo_gen = require("utils.logo-gen")
 local colorizer = require("utils.colorizer")
 
+-- Get base directory of the project
+local script_path = debug.getinfo(1).source:match("@?(.*)")
+local module_dir = script_path:match("(.*[/\\])") or "./"
+local base_dir = module_dir:gsub("modules[/\\]$", "")
+
 local function get_os_name()
   local handle = io.popen("uname -o")
   local result = handle:read("*a")
@@ -15,7 +20,8 @@ function LogoModule.run(config)
   if text == "" then text = "Unknown" end
 
   local color = config.color or "blue"
-  local font_path = "synch/font/smslant.flf"
+  -- Construct font path relative to project base
+  local font_path = base_dir .. "font/smslant.flf"
 
   local success, lines = pcall(logo_gen.generate, text, font_path)
 
@@ -25,6 +31,7 @@ function LogoModule.run(config)
     end
   else
     print(colorizer.colorize("Error generating logo: " .. tostring(lines), "red"))
+    print(colorizer.colorize("Looked for font at: " .. font_path, "red"))
   end
 end
 

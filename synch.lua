@@ -1,5 +1,9 @@
--- Add project directories to package path
-package.path = package.path .. ";synch/?.lua"
+-- Get the directory where synch.lua lives
+local script_path = debug.getinfo(1).source:match("@?(.*)")
+local script_dir = script_path:match("(.*[/\\])") or "./"
+
+-- Add project directories to package path relative to the script location
+package.path = package.path .. ";" .. script_dir .. "?.lua"
 
 local toml = require("utils.toml")
 
@@ -11,7 +15,7 @@ local function read_file(path)
   return content
 end
 
-local config_path = "synch/config.toml"
+local config_path = script_dir .. "config.toml"
 local config_content = read_file(config_path)
 local config = {}
 
