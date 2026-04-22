@@ -1,15 +1,25 @@
 local Colorizer = {}
 
 local ansi_colors = {
-  black   = 30,
-  red     = 31,
-  green   = 32,
-  yellow  = 33,
-  blue    = 34,
-  magenta = 35,
-  cyan    = 36,
-  white   = 37,
-  reset   = 0,
+  black         = 30,
+  red           = 31,
+  green         = 32,
+  yellow        = 33,
+  blue          = 34,
+  magenta       = 35,
+  cyan          = 36,
+  white         = 37,
+  
+  ["light black"]   = 90,
+  ["light red"]     = 91,
+  ["light green"]   = 92,
+  ["light yellow"]  = 93,
+  ["light blue"]    = 94,
+  ["light magenta"] = 95,
+  ["light cyan"]    = 96,
+  ["light white"]   = 97,
+  
+  reset         = 0,
 }
 
 local function hex_to_rgb(hex)
