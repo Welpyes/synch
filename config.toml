@@ -1,8 +1,17 @@
 [global]
 modules = [
- "logo"
+ "logo",
+ "kernel"
 ]
 
 [logo]
-color = "blue" # can be a hex code, or use the terminal's color, default is blue
-text = "Arch" # force override of the name, instead of `uname -o` we will use this instead
+color = "blue"
+text = "Android"
+
+[kernel]
+key = "Kernel"
+icon = ""
+key-color = "white"
+icon-color = "light blue"
+format-color = "light blue"
+format = "{name} {version}"
