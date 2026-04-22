@@ -1,30 +1,37 @@
--- Add logo directory to package path to allow requiring logo-gen
-package.path = package.path .. ";synch/logo/?.lua"
+-- Add project directories to package path
+package.path = package.path .. ";synch/?.lua"
 
-local logo_gen = require("logo-gen")
+local toml = require("utils.toml")
 
-local function get_os_name()
-  local handle = io.popen("uname -o")
-  local result = handle:read("*a")
-  handle:close()
-  return result:gsub("%s+$", "") -- Trim trailing whitespace/newline
+local function read_file(path)
+  local file = io.open(path, "r")
+  if not file then return nil end
+  local content = file:read("*a")
+  file:close()
+  return content
 end
 
-local os_name = get_os_name()
-if os_name == "" then
-  os_name = "Unknown"
-end
+local config_path = "synch/config.toml"
+local config_content = read_file(config_path)
+local config = {}
 
--- Font file path relative to the project root or adjusted for the module
-local font_path = "synch/logo/smslant.flf"
-
-local success, lines = pcall(logo_gen.generate, os_name, font_path)
-
-if success then
-  for _, line in ipairs(lines) do
-    print(line)
-  end
+if config_content then
+  config = toml.parse(config_content)
 else
-  print("Error generating logo: " .. tostring(lines))
-  print("OS: " .. os_name)
+  -- Default config if file missing
+  config = {
+    global = { modules = { "logo" } },
+    logo = { color = "blue" }
+  }
+end
+
+if config.global and config.global.modules then
+  for _, module_name in ipairs(config.global.modules) do
+    local success, module = pcall(require, "modules." .. module_name)
+    if success then
+      module.run(config[module_name])
+    else
+      print("Error loading module: " .. module_name .. " - " .. tostring(module))
+    end
+  end
 end
