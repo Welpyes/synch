@@ -1,8 +1,8 @@
 local UptimeModule = {}
 local uptime_util = require("utils.get-uptime")
-local colorizer = require("utils.colorizer")
+local formatter = require("utils.formatter")
 
-function UptimeModule.run(config)
+function UptimeModule.run(config, max_width)
   config = config or {}
   local time_str = uptime_util.get_uptime()
 
@@ -10,19 +10,9 @@ function UptimeModule.run(config)
   local key = config.key or "Uptime"
   local format = config.format or "{time}"
   
-  local icon_color = config["icon-color"] or "light yellow"
-  local key_color = config["key-color"] or "white"
-  local format_color = config["format-color"] or "light yellow"
-
   local value = format:gsub("{time}", time_str)
 
-  local output = string.format("%s %s     %s", 
-    colorizer.colorize(icon, icon_color),
-    colorizer.colorize(key, key_color),
-    colorizer.colorize(value, format_color)
-  )
-  
-  print(output)
+  print(formatter.format(icon, key, value, config, max_width))
 end
 
 return UptimeModule
