@@ -1,6 +1,7 @@
 [global]
 modules = [
  "logo",
+ "os",
  "kernel",
  "uptime"
 ]
@@ -8,6 +9,14 @@ modules = [
 [logo]
 color = "blue"
 format = "{distro}"
+
+[os]
+key = "OS"
+icon = ""
+key-color = "white"
+icon-color = "light green"
+format-color = "light green"
+format = "{name} {release} {version} {arch}"
 
 [kernel]
 key = "Kernel"
