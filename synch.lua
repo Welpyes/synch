@@ -15,18 +15,36 @@ local function read_file(path)
   return content
 end
 
-local config_path = script_dir .. "config.toml"
-local config_content = read_file(config_path)
-local config = {}
+-- 1. Configuration Loading Logic
+local home = os.getenv("HOME") or ""
+local config_paths = {
+  home .. "/.config/synch/config.toml",
+  script_dir .. "config.toml"
+}
 
-if config_content then
-  config = toml.parse(config_content)
-else
-  config = {
-    global = { modules = { "logo" } },
-    logo = { color = "blue" }
-  }
+local config_content = nil
+for _, path in ipairs(config_paths) do
+  config_content = read_file(path)
+  if config_content then break end
 end
+
+-- Default fallback config if no file found
+local default_config = {
+  global = {
+    modules = { "logo", "user:user", "os", "host", "kernel", "uptime", "shell", "cpu", "gpu" }
+  },
+  logo = { color = "blue", format = "{distro}" },
+  ["user:user"] = { key = "User", icon = "", ["icon-color"] = "light magenta", ["format-color"] = "light magenta", format = "{user}" },
+  os = { key = "OS", icon = "", ["icon-color"] = "light green", ["format-color"] = "light green", format = "{name} {release} {version} {arch}" },
+  host = { key = "Host", icon = "󱤓", ["icon-color"] = "light cyan", ["format-color"] = "light cyan", format = "{manufacturer} {model}" },
+  kernel = { key = "Kernel", icon = "", ["icon-color"] = "light blue", ["format-color"] = "light blue", format = "{name} {version}" },
+  uptime = { key = "Uptime", icon = "", ["icon-color"] = "light yellow", ["format-color"] = "light yellow", format = "{time}" },
+  shell = { key = "Shell", icon = "", ["icon-color"] = "light blue", ["format-color"] = "light blue", format = "{name} {version}" },
+  cpu = { key = "Cpu", icon = "", ["icon-color"] = "red", ["format-color"] = "red", format = "{cpu}" },
+  gpu = { key = "Gpu", icon = "󰢮", ["icon-color"] = "light yellow", ["format-color"] = "light yellow", format = "{name}" }
+}
+
+local config = config_content and toml.parse(config_content) or default_config
 
 -- Pre-load and calculate max key width
 local loaded_modules = {}
@@ -36,7 +54,6 @@ if config.global and config.global.modules then
     local module_name = entry:match("^([^:]+)")
     local module_config = config[entry]
     
-    -- Cache modules to avoid repeated pcall/require overhead
     if not loaded_modules[module_name] then
       loaded_modules[module_name] = require("modules." .. module_name)
     end
