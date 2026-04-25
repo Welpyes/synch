@@ -1,16 +1,13 @@
 local ffi = require("ffi")
 local sys_info = require("utils.get-sysinfo")
-
-ffi.cdef[[
-  int __system_property_get(const char *name, char *value);
-]]
+local sys = require("utils.sys")
 
 local HostUtil = {}
 local memoized_host = nil
 
 local function get_android_prop(prop_name)
   local value = ffi.new("char[92]")
-  local len = ffi.C.__system_property_get(prop_name, value)
+  local len = sys.__system_property_get(prop_name, value)
   if len > 0 then return ffi.string(value, len) end
   return nil
 end

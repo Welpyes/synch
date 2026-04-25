@@ -1,7 +1,7 @@
 local ffi = require("ffi")
 local cache = require("utils.cache")
 
-ffi.cdef[[
+pcall(ffi.cdef, [[
   typedef void* VkInstance;
   typedef void* VkPhysicalDevice;
   typedef uint32_t VkFlags;
@@ -36,7 +36,7 @@ ffi.cdef[[
   void vkDestroyInstance(VkInstance instance, const void* pAllocator);
   int vkEnumeratePhysicalDevices(VkInstance instance, uint32_t* pPhysicalDeviceCount, VkPhysicalDevice* pPhysicalDevices);
   void vkGetPhysicalDeviceProperties(VkPhysicalDevice physicalDevice, VkPhysicalDeviceProperties* pProperties);
-]]
+]])
 
 local GPU = {}
 local memoized_gpu_list = nil

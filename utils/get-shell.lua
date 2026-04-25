@@ -1,21 +1,5 @@
 local ffi = require("ffi")
-
-ffi.cdef[[
-  typedef struct __dirstream DIR;
-  struct dirent {
-    long d_ino;
-    long d_off;
-    unsigned short d_reclen;
-    unsigned char d_type;
-    char d_name[256];
-  };
-  int getppid(void);
-  ssize_t readlink(const char *path, char *buf, size_t bufsiz);
-  DIR *opendir(const char *name);
-  struct dirent *readdir(DIR *dirp);
-  int closedir(DIR *dirp);
-  char *getenv(const char *name);
-]]
+local sys = require("utils.sys")
 
 local Shell = {}
 local memoized_shell_info = nil
@@ -25,11 +9,11 @@ local function get_version_from_pacman(shell_name)
   local database_search_paths = { terminal_prefix .. "/var/lib/pacman/local/", "/var/lib/pacman/local/" }
   
   for _, database_path in ipairs(database_search_paths) do
-    local directory_handle = ffi.C.opendir(database_path)
+    local directory_handle = sys.opendir(database_path)
     if directory_handle ~= nil then
       local version_found = nil
       while true do
-        local entry = ffi.C.readdir(directory_handle)
+        local entry = sys.readdir(directory_handle)
         if entry == nil then break end
         
         local entry_name = ffi.string(entry.d_name)
@@ -38,7 +22,7 @@ local function get_version_from_pacman(shell_name)
           break
         end
       end
-      ffi.C.closedir(directory_handle)
+      sys.closedir(directory_handle)
       if version_found then return version_found end
     end
   end
@@ -48,10 +32,10 @@ end
 function Shell.get_info()
   if memoized_shell_info then return memoized_shell_info end
 
-  local parent_pid = ffi.C.getppid()
+  local parent_pid = sys.getppid()
   local executable_proc_path = string.format("/proc/%d/exe", parent_pid)
   local path_buffer = ffi.new("char[256]")
-  local path_length = ffi.C.readlink(executable_proc_path, path_buffer, 255)
+  local path_length = sys.readlink(executable_proc_path, path_buffer, 255)
   
   local full_executable_path = "/bin/sh"
   local shell_name = "sh"
@@ -71,7 +55,7 @@ function Shell.get_info()
   
   local environment_variable_name = shell_version_variables[shell_name]
   if environment_variable_name then
-    local version_pointer = ffi.C.getenv(environment_variable_name)
+    local version_pointer = sys.getenv(environment_variable_name)
     if version_pointer ~= nil then
       memoized_shell_info = { 
         name = shell_name, 

@@ -35,7 +35,7 @@ end
 -- Default fallback config if no file found
 local default_config = {
 	global = {
-		modules = { "logo", "user:user", "os", "host", "kernel", "uptime", "shell", "cpu", "gpu" },
+		modules = { "logo", "user:user", "os", "de", "wm", "host", "kernel", "uptime", "shell", "cpu", "gpu", "packages" },
 	},
 	logo = { color = "blue", format = "{distro}" },
 	["user:user"] = {
@@ -51,6 +51,20 @@ local default_config = {
 		["icon-color"] = "light green",
 		["format-color"] = "light green",
 		format = "{name} {release} {version} {arch}",
+	},
+	de = {
+		key = "DE",
+		icon = "",
+		["icon-color"] = "light blue",
+		["format-color"] = "light blue",
+		format = "{de}",
+	},
+	wm = {
+		key = "WM",
+		icon = "",
+		["icon-color"] = "light blue",
+		["format-color"] = "light blue",
+		format = "{wm}",
 	},
 	host = {
 		key = "Host",
@@ -87,6 +101,13 @@ local default_config = {
 		["icon-color"] = "light yellow",
 		["format-color"] = "light yellow",
 		format = "{name}",
+	},
+	packages = {
+		key = "Packages",
+		icon = "󰏖",
+		["icon-color"] = "light yellow",
+		["format-color"] = "light yellow",
+		format = "{all} ({detailed})",
 	},
 }
 

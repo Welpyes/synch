@@ -1,25 +1,13 @@
 local ffi = require("ffi")
 local cache = require("utils.cache")
-
-ffi.cdef[[
-  struct utsname {
-    char sysname[65];
-    char nodename[65];
-    char release[65];
-    char version[65];
-    char machine[65];
-    char domainname[65];
-  };
-  int uname(struct utsname *buf);
-  int __system_property_get(const char *name, char *value);
-]]
+local sys = require("utils.sys")
 
 local SysInfo = {}
 local memoized_info = nil
 
 local function get_android_prop(prop_name)
   local value = ffi.new("char[92]")
-  local len = ffi.C.__system_property_get(prop_name, value)
+  local len = sys.__system_property_get(prop_name, value)
   if len > 0 then return ffi.string(value, len) end
   return nil
 end
@@ -54,7 +42,7 @@ function SysInfo.get_info()
   end
 
   local u = ffi.new("struct utsname[1]")
-  ffi.C.uname(u)
+  sys.uname(u)
   
   local distro, version, codename, is_android
   local f = io.open("/system/lib64/ld-android.so", "r")

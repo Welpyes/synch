@@ -1,6 +1,6 @@
 local Cache = {}
 
-local cache_path = os.getenv("HOME") .. "/.cache/synch-cache.json"
+local cache_path = ( os.getenv("PREFIX") or "/tmp" ) .. "/synch-cache.json"
 local loaded_data = nil
 
 local function read_file(path)
