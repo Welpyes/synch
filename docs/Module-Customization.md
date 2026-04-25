@@ -50,6 +50,11 @@ These options apply to almost every module except `logo`:
 ### `cpu`
 - `format`: `{cpu}`.
 
+### `memory`
+- `format`:
+    - `{used}`: Used RAM in MiB.
+    - `{total}`: Total RAM in MiB.
+
 ---
 
 ## Color Reference

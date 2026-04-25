@@ -1,38 +1,54 @@
 [global]
 modules = [
  "logo",
+ "os",
+ "kernel",
  "user:user",
  "user:hostname",
- "os",
- "de",
- "wm",
  "host",
- "kernel",
- "uptime",
- "shell",
  "cpu",
  "gpu",
- "packages"
+ "uptime",
+ "shell",
+ "wm",
+ "packages",
+ "memory"
 ]
 
 [logo]
 color = "blue"
 format = "{distro}"
 
-[packages]
-key = "Packages"
-icon = "󰏖"
+[memory]
+key = "Memory"
+icon = "󰍛"
 key-color = "white"
 icon-color = "light yellow"
 format-color = "light yellow"
-format = "{detailed}"
+format = "{used} MiB / {total} MiB"
+
+[os]
+key = "OS"
+icon = ""
+key-color = "white"
+icon-color = "blue"
+format-color = "blue"
+format = "{name} {release} {version} {arch}"
+
+[kernel]
+key = "Kernel"
+icon = ""
+key-color = "white"
+icon-color = "light yellow"
+format-color = "light yellow"
+format = "{name} {version}"
 
 [user:user]
 key = "User"
 icon = ""
 key-color = "white"
-icon-color = "light magenta"
-format-color = "light magenta"
+icon-color = "light green"
+format-color = "light green"
 format = "{user}"
 
 [user:hostname]
@@ -43,13 +59,45 @@ icon-color = "light magenta"
 format-color = "light magenta"
 format = "{host}"
 
-[os]
-key = "OS"
-icon = ""
+[host]
+key = "Host"
+icon = "󱤓"
 key-color = "white"
-icon-color = "light green"
-format-color = "light green"
-format = "{name} {release} {version} {arch}"
+icon-color = "light red"
+format-color = "light red"
+format = "{manufacturer} {model}"
+
+[cpu]
+key = "Cpu"
+icon = ""
+key-color = "white"
+icon-color = "cyan"
+format-color = "cyan"
+format = "{cpu}"
+
+[gpu]
+key = "Gpu"
+icon = "󰢮"
+key-color = "white"
+icon-color = "green"
+format-color = "green"
+format = "{name}"
+
+[uptime]
+key = "Uptime"
+icon = ""
+key-color = "white"
+icon-color = "light yellow"
+format-color = "light yellow"
+format = "{time}"
+
+[shell]
+key = "Shell"
+icon = ""
+key-color = "white"
+icon-color = "light magenta"
+format-color = "light magenta"
+format = "{name} {version}"
 
 [de]
 key = "DE"
@@ -67,50 +115,10 @@ icon-color = "light blue"
 format-color = "light blue"
 format = "{wm}"
 
-[host]
-key = "Host"
-icon = "󱤓"
-key-color = "white"
-icon-color = "light cyan"
-format-color = "light cyan"
-format = "{manufacturer} {model}"
-
-[cpu]
-key = "Cpu"
-icon = ""
-key-color = "white"
-icon-color = "red"
-format-color = "red"
-format = "{cpu}"
-
-[gpu]
-key = "Gpu"
-icon = "󰢮"
+[packages]
+key = "Packages"
+icon = "󰏖"
 key-color = "white"
 icon-color = "light yellow"
 format-color = "light yellow"
-format = "{name}"
-
-[shell]
-key = "Shell"
-icon = ""
-key-color = "white"
-icon-color = "light blue"
-format-color = "light blue"
-format = "{name} {version}"
-
-[kernel]
-key = "Kernel"
-icon = ""
-key-color = "white"
-icon-color = "light blue"
-format-color = "light blue"
-format = "{name} {version}"
-
-[uptime]
-key = "Uptime"
-icon = ""
-key-color = "white"
-icon-color = "light yellow"
-format-color = "light yellow"
-format = "{time}"
+format = "{detailed}"

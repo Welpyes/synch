@@ -16,8 +16,10 @@ Synch uses a modular system where each piece of information is retrieved by a sp
 | `uptime` | Shows how long the system has been running. |
 | `shell` | Detects the current shell and its version. |
 | `cpu` | Displays CPU model, core count, and frequency. |
-| `gpu` | Detects GPU model and type via Vulkan. |
-| `packages` | Counts installed packages from multiple managers. |
+| `gpu` | Detects GPU model and type via Vulkan. | `󰢮` |
+| `packages` | Counts installed packages from multiple managers. | `󰏖` |
+| `memory` | Displays current RAM usage and total capacity. | `󰍛` |
+
 
 ## Module Execution
 

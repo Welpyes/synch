@@ -35,9 +35,16 @@ end
 -- Default fallback config if no file found
 local default_config = {
 	global = {
-		modules = { "logo", "user:user", "os", "de", "wm", "host", "kernel", "uptime", "shell", "cpu", "gpu", "packages" },
+		modules = { "logo", "user:user", "os", "de", "wm", "host", "kernel", "uptime", "shell", "cpu", "gpu", "packages", "memory" },
 	},
 	logo = { color = "blue", format = "{distro}" },
+	memory = {
+		key = "Memory",
+		icon = "󰍛",
+		["icon-color"] = "light yellow",
+		["format-color"] = "light yellow",
+		format = "{used} MiB / {total} MiB",
+	},
 	["user:user"] = {
 		key = "User",
 		icon = "",
