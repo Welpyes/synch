@@ -10,7 +10,7 @@ local known_wms = {
   "labwc", "bspwm", "i3", "sway", "openbox", "kwin", "mutter", "muffin", "marco", "xfwm4",
   "awesome", "dwm", "spectrwm", "ratpoison", "herbstluftwm", "fluxbox",
   "blackbox", "waimea", "fvwm", "sawfish", "icewm", "afterstep",
-  "enlightenment", "qtile", "xmonad", "hyprland", "weston", "wayfire"
+  "enlightenment", "qtile", "xmonad", "hyprland", "weston", "wayfire", "niri", "mangowc"
 }
 
 local function get_android_prop(prop_name)
