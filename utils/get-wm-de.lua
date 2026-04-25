@@ -5,8 +5,9 @@ local sys = require("utils.sys")
 local WMDE = {}
 local memoized_info = nil
 
+-- Order matters: specialized or newer WMs/compositors first
 local known_wms = {
-  "bspwm", "i3", "sway", "openbox", "kwin", "mutter", "muffin", "marco", "xfwm4",
+  "labwc", "bspwm", "i3", "sway", "openbox", "kwin", "mutter", "muffin", "marco", "xfwm4",
   "awesome", "dwm", "spectrwm", "ratpoison", "herbstluftwm", "fluxbox",
   "blackbox", "waimea", "fvwm", "sawfish", "icewm", "afterstep",
   "enlightenment", "qtile", "xmonad", "hyprland", "weston", "wayfire"
@@ -41,14 +42,19 @@ local function get_wm_from_proc()
           local base_name = proc_name:match("([^/]+)$")
           for _, wm in ipairs(known_wms) do
             if base_name == wm then
-              found_wm = wm
-              break
+              -- Prioritize if we find a Wayland compositor while in Wayland
+              if os.getenv("WAYLAND_DISPLAY") and (wm == "labwc" or wm == "sway" or wm == "hyprland") then
+                found_wm = wm
+                break
+              end
+              -- Otherwise store and keep looking for better match
+              if not found_wm then found_wm = wm end
             end
           end
         end
       end
     end
-    if found_wm then break end
+    if found_wm and (found_wm == "labwc" or found_wm == "hyprland") then break end
   end
   sys.closedir(dir)
   return found_wm
@@ -111,9 +117,9 @@ function WMDE.get_info()
   if display or wayland_display then
     wm = get_wm_from_proc()
     if wm then
-      wm = wm .. (display and " (X11)" or " (Wayland)")
+      wm = wm .. (wayland_display and " (Wayland)" or " (X11)")
     else
-      wm = display and "X11" or "Wayland"
+      wm = wayland_display and "Wayland" or "X11"
     end
   end
 

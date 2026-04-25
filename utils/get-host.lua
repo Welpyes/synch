@@ -1,6 +1,7 @@
 local ffi = require("ffi")
 local sys_info = require("utils.get-sysinfo")
 local sys = require("utils.sys")
+local cache = require("utils.cache")
 
 local HostUtil = {}
 local memoized_host = nil
@@ -23,6 +24,12 @@ end
 function HostUtil.get_info()
   if memoized_host then return memoized_host end
 
+  local cached = cache.get("host")
+  if cached and cached.manufacturer and cached.model then
+    memoized_host = cached
+    return memoized_host
+  end
+
   local info = sys_info.get_info()
   
   if info.is_android then
@@ -40,6 +47,8 @@ function HostUtil.get_info()
       model = model
     }
   end
+
+  cache.set("host", memoized_host)
   return memoized_host
 end
 

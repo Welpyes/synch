@@ -1,4 +1,5 @@
 local sys_info = require("utils.get-sysinfo")
+local cache = require("utils.cache")
 
 local CPUUtil = {}
 local memoized_cpu = nil
@@ -26,7 +27,6 @@ local cpu_parts = {
 local function get_max_freq(policy)
   local f = io.open("/sys/devices/system/cpu/cpufreq/policy" .. policy .. "/cpuinfo_max_freq", "r")
   if not f then
-    -- Try another common path
     f = io.open("/sys/devices/system/cpu/cpu" .. policy .. "/cpufreq/scaling_max_freq", "r")
   end
   if f then
@@ -54,7 +54,6 @@ local function get_android_cpu()
     if part then cur_part = part end
     if cur_impl and cur_part then
       local key = cur_impl .. cur_part
-      local impl_name = implementers[cur_impl] or cur_impl
       local part_name = (cpu_parts[cur_impl] and cpu_parts[cur_impl][cur_part]) or cur_part
       if not seen[key] then
         seen[key] = true
@@ -92,7 +91,6 @@ local function get_linux_cpu()
   end
   f:close()
   
-  -- Try to get freq for cpu0 as representative
   local freq = get_max_freq(0)
   local freq_str = freq and string.format(" @ %.2f GHz", freq) or ""
   
@@ -102,6 +100,12 @@ end
 function CPUUtil.get_cpu()
   if memoized_cpu then return memoized_cpu end
   
+  local cached = cache.get("cpu")
+  if cached and cached.name then
+    memoized_cpu = cached.name
+    return memoized_cpu
+  end
+
   local info = sys_info.get_info()
   if info.is_android then
     memoized_cpu = get_android_cpu()
@@ -109,6 +113,7 @@ function CPUUtil.get_cpu()
     memoized_cpu = get_linux_cpu()
   end
   
+  cache.set("cpu", { name = memoized_cpu })
   return memoized_cpu
 end
 

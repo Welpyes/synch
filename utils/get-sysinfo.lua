@@ -33,29 +33,44 @@ end
 function SysInfo.get_info()
   if memoized_info then return memoized_info end
 
-  local cached_info = cache.get("sysinfo")
-  if cached_info and cached_info.distro and cached_info.codename then
-    memoized_info = cached_info
-    -- Ensure is_android is correctly set in cached info
-    memoized_info.is_android = (memoized_info.distro == "Android")
-    return memoized_info
-  end
-
   local u = ffi.new("struct utsname[1]")
   sys.uname(u)
   
-  local distro, version, codename, is_android
-  local f = io.open("/system/lib64/ld-android.so", "r")
-  if f then
-    f:close()
-    distro = "Android"
-    is_android = true
+  local hostname = ffi.string(u[0].nodename)
+  local kernel_version = ffi.string(u[0].release)
+  
+  local cached = cache.get("sysinfo")
+  local distro, kernel_name, arch
+  
+  if cached and cached.distro and cached.kernel and cached.arch then
+    distro = cached.distro
+    kernel_name = cached.kernel
+    arch = cached.arch
+  else
+    kernel_name = ffi.string(u[0].sysname)
+    arch = ffi.string(u[0].machine)
+    
+    local f = io.open("/system/lib64/ld-android.so", "r")
+    if f then
+      f:close()
+      distro = "Android"
+    else
+      local os_info = parse_os_release()
+      distro = os_info.name
+    end
+    
+    cache.set("sysinfo", { distro = distro, kernel = kernel_name, arch = arch })
+  end
+
+  -- These are never cached and always fetched fresh
+  local version, codename
+  local is_android = (distro == "Android")
+  
+  if is_android then
     version = get_android_prop("ro.com.google.gmsversion") or ""
     codename = get_android_prop("ro.build.version.all_codenames") or ""
   else
     local os_info = parse_os_release()
-    distro = os_info.name
-    is_android = false
     version = os_info.version
     codename = os_info.codename
   end
@@ -65,13 +80,12 @@ function SysInfo.get_info()
     version = version,
     codename = codename,
     is_android = is_android,
-    kernel = ffi.string(u[0].sysname),
-    ["kernel-version"] = ffi.string(u[0].release),
-    arch = ffi.string(u[0].machine),
-    hostname = ffi.string(u[0].nodename)
+    kernel = kernel_name,
+    ["kernel-version"] = kernel_version,
+    arch = arch,
+    hostname = hostname
   }
 
-  cache.set("sysinfo", memoized_info)
   return memoized_info
 end
 
