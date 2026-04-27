@@ -2,6 +2,8 @@
 
 A high-performance fetch program written in Lua for LuaJIT, inspired by [Synfetch](https://github.com/SXSLVT/synfetch) and [Nitch](https://github.com/ssleert/nitch).
 
+![screenshot.png](screenshot.png)
+
 ## Features
 
 - **Very Quick:** Powered by LuaJIT and optimized for minimal overhead.
@@ -66,6 +68,11 @@ modules = [
  "packages"
 ]
 ```
+## Benchmark
+
+The execution speed is very good for a scripting language thanks to luajit. it still pales in comparison to nitch.
+
+![benchmark](benchmark.jpg)
 
 ## Why Lua?
 
