@@ -1,8 +1,9 @@
 # Paths
 LUASCRIPT = bundle.lua
 BINARY = synch
-LUAJIT_LIB = /data/data/com.termux/files/usr/lib/libluajit-5.1.a
-LUAJIT_INC = /data/data/com.termux/files/usr/include/luajit-2.1
+
+LUAJIT_LIB = $(shell pkg-config --variable=libdir luajit | xargs -I{} echo {}/libluajit-5.1.a)
+LUAJIT_INC = $(shell pkg-config --cflags-only-I luajit | sed 's/-I//')
 
 # Installation
 PREFIX ?= /usr/local
