@@ -45,7 +45,7 @@ make
 
 Synch looks for configuration at `~/.config/synch/config.toml`. If not found, it falls back to the internal default configuration.
 
-For full module options and customization, see the [Wiki](docs/Home.md).
+For full module options and customization, see the [Wiki](../docs/Home.md).
 
 You can customize module order and appearance in the `config.toml`:
 
